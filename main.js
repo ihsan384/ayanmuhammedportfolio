@@ -370,8 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainNav = document.getElementById('mainNav');
 
   if (mobileMenuBtn && mainNav) {
-    mobileMenuBtn.addEventListener('click', () => {
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isOpen = mainNav.classList.toggle('nav-open');
+      mobileMenuBtn.classList.toggle('active', isOpen);
       mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
 
@@ -379,8 +381,27 @@ document.addEventListener('DOMContentLoaded', () => {
     mainNav.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
         mainNav.classList.remove('nav-open');
+        mobileMenuBtn.classList.remove('active');
         mobileMenuBtn.setAttribute('aria-expanded', 'false');
       });
+    });
+
+    // Close on clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mainNav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        mainNav.classList.remove('nav-open');
+        mobileMenuBtn.classList.remove('active');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 992) {
+        mainNav.classList.remove('nav-open');
+        mobileMenuBtn.classList.remove('active');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
